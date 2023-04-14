@@ -1,9 +1,13 @@
-use macroquad::prelude::*;
-
+use macroquad::prelude;
 use macroquad::ui::{
     hash, root_ui,
     widgets::{self, },
 };
+
+use rand::{
+        seq::SliceRandom,
+        thread_rng
+        } as rand;
 
 const TILE_RECT_SIZE: f32 = 20.;
 const TILE_GAP: f32 = 5.;
@@ -49,7 +53,7 @@ async fn main() {
                 ui.slider(hash!(), "[0 .. 50]", 0f32..50f32, &mut dungeon_size);
                 if ui.button(None, "Generate") {
                    dungeon = populate_tiles(dungeon_size);
-                   collapse(dungeon);
+                   collapse(&mut dungeon);
                 }            
             });
         dungeon_size = dungeon_size.round();
@@ -76,5 +80,9 @@ fn populate_tiles(dungeon_size: f32) -> Vec<Tile> {
 }
 
 fn collapse(dungeon: &mut Vec<Tile>) {
-    
+    let i = dungeon.choose(&mut thread_rng());
+    match i {
+        Some(x) => print!("{}", x.x),
+        None => print!("None")
+    }
 }
