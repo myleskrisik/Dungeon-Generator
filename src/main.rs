@@ -1,13 +1,23 @@
-use macroquad::prelude;
+use macroquad::prelude::{
+   draw_rectangle,
+   clear_background,
+   next_frame,
+   vec2,
+   WHITE,
+   BLACK,
+   BLUE,
+};
 use macroquad::ui::{
     hash, root_ui,
     widgets::{self, },
 };
 
+use macroquad::color::Color;
+
 use rand::{
-        seq::SliceRandom,
-        thread_rng
-        } as rand;
+    seq::SliceRandom,
+    thread_rng
+};
 
 const TILE_RECT_SIZE: f32 = 20.;
 const TILE_GAP: f32 = 5.;
@@ -24,17 +34,22 @@ enum Orientation {
     Horizontal
 }
 
-struct Tile {
+pub struct Tile {
     x: f32,
     y: f32,
     collapsed: bool,
     tile_type: Option<TileType>,
     orientation: Option<Orientation>,
+    color: macroquad::color::Color,
 }
 
 impl Tile {
     pub fn draw(&self) {
-        draw_rectangle(self.x, self.y, TILE_RECT_SIZE, TILE_RECT_SIZE, BLACK);
+        draw_rectangle(self.x, self.y, TILE_RECT_SIZE, TILE_RECT_SIZE, self.color);
+    }
+
+    pub fn change_color(&mut self, color: Color) {
+        self.color = color;
     }
 }
 
@@ -73,16 +88,12 @@ fn populate_tiles(dungeon_size: f32) -> Vec<Tile> {
         for j in 0u32..dungeon_size as u32 {
             let room_x = (i as f32 * (TILE_RECT_SIZE + TILE_GAP)) + DRAWING_START.0;
             let room_y = (j as f32 * (TILE_RECT_SIZE + TILE_GAP)) + DRAWING_START.1;
-            dungeon.push(Tile {x: room_x, y: room_y, collapsed: false, tile_type: None, orientation: None}); 
+            dungeon.push(Tile {x: room_x, y: room_y, collapsed: false, tile_type: None, orientation: None, color: BLACK}); 
         }
     }
     dungeon
 }
 
 fn collapse(dungeon: &mut Vec<Tile>) {
-    let i = dungeon.choose(&mut thread_rng());
-    match i {
-        Some(x) => print!("{}", x.x),
-        None => print!("None")
-    }
+    let base_room: Option<&mut Tile> = dungeon.choose_mut(&mut thread_rng());
 }
